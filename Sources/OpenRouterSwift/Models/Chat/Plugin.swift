@@ -16,6 +16,8 @@ public enum Plugin: Encodable, Sendable {
   case responseHealing
   /// Automatic model routing.
   case autoRouter
+  /// Automatic model routing (beta variant, includes newer candidate models).
+  case autoBetaRouter
   /// Cost-optimized routing.
   case paretoRouter
   /// Multi-model panel.
@@ -86,6 +88,7 @@ public enum Plugin: Encodable, Sendable {
     case .moderation: return "moderation"
     case .responseHealing: return "response-healing"
     case .autoRouter: return "auto-router"
+    case .autoBetaRouter: return "auto-beta-router"
     case .paretoRouter: return "pareto-router"
     case .fusion: return "fusion"
     case .custom(let id, _): return id
@@ -116,7 +119,7 @@ public enum Plugin: Encodable, Sendable {
       var mutable = container
       try encodeDictionary(config, into: &mutable)
 
-    case .moderation, .responseHealing, .autoRouter, .paretoRouter:
+    case .moderation, .responseHealing, .autoRouter, .autoBetaRouter, .paretoRouter:
       break
     }
   }
