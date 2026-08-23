@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  # Package.swift uses a local path dependency on ../SwiftOpenAI until the public-transport
+  # changes ship in a tagged SwiftOpenAI release. CI clones that repo as a sibling.
+  # Set to "main" once https://github.com/jamesrochabrun/SwiftOpenAI PR for public
+  # HTTPRequest/HTTPResponse fields is merged.
+  SWIFTOPENAI_REF: jroch-public-http-transport
+
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: OpenRouterSwift
+      - uses: actions/checkout@v4
+        with:
+          repository: jamesrochabrun/SwiftOpenAI
+          ref: ${{ env.SWIFTOPENAI_REF }}
+          path: SwiftOpenAI
+      - name: Build and test
+        working-directory: OpenRouterSwift
+        run: swift test
+
+  linux:
+    runs-on: ubuntu-latest
+    container: swift:6.0-jammy
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: OpenRouterSwift
+      - uses: actions/checkout@v4
+        with:
+          repository: jamesrochabrun/SwiftOpenAI
+          ref: ${{ env.SWIFTOPENAI_REF }}
+          path: SwiftOpenAI
+      - name: Build and test
+        working-directory: OpenRouterSwift
+        run: swift test

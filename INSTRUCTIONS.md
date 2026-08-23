@@ -114,4 +114,7 @@ tagged SwiftOpenAI release. Once tagged upstream, switch to
 - [x] Phase 4 (v0.4.0) — generation content/feedback, activity, analytics, providers, ZDR, benchmarks, classifications, datasets
 - [x] Phase 5 (v0.5.0) — management tier: keys provisioning, BYOK, guardrails (+assignments), workspaces (+budgets/members), org members, observability destinations
 - [x] Phase 6 — SCIM groups/group-mappings
-- [ ] v1.0.0 polish — DocC catalog, CI (macOS + Linux matrix), live smoke tests in Examples/, API stability audit
+- [x] CI — GitHub Actions macOS + Linux matrix (`.github/workflows/ci.yml`; clones SwiftOpenAI
+  as the sibling path dep — flip `SWIFTOPENAI_REF` to `main` once the transport PR merges)
+- [x] Linux — pure-Foundation code; PKCE uses swift-crypto on Linux (CryptoKit on Apple)
+- [ ] v1.0.0 polish — DocC catalog, live smoke tests in Examples/, API stability audit

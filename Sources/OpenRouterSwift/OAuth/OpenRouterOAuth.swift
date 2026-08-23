@@ -2,6 +2,8 @@ import Foundation
 import SwiftOpenAI
 #if canImport(CryptoKit)
 import CryptoKit
+#elseif canImport(Crypto)
+import Crypto
 #endif
 
 /// OAuth PKCE flow for obtaining a user-scoped API key without ever handling their password:
@@ -24,12 +26,13 @@ public enum OpenRouterOAuth {
     public let codeChallenge: String
     public let method: Method
 
-    /// Generates a fresh verifier/challenge pair. Uses S256 where CryptoKit is available,
-    /// falling back to the `plain` method elsewhere.
+    /// Generates a fresh verifier/challenge pair. Uses S256 everywhere — CryptoKit on
+    /// Apple platforms, swift-crypto on Linux — with a `plain` fallback for any platform
+    /// lacking both.
     public init() {
       let verifier = Self.randomVerifier()
       codeVerifier = verifier
-      #if canImport(CryptoKit)
+      #if canImport(CryptoKit) || canImport(Crypto)
       let digest = SHA256.hash(data: Data(verifier.utf8))
       codeChallenge = Data(digest).base64URLEncoded
       method = .s256
