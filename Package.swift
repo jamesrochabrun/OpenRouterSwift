@@ -12,10 +12,7 @@ let package = Package(
     .library(name: "OpenRouterSwift", targets: ["OpenRouterSwift"]),
   ],
   dependencies: [
-    // TODO: switch to .package(url: "https://github.com/jamesrochabrun/SwiftOpenAI", from: "4.5.0")
-    // once a release containing the public HTTPRequest/HTTPResponse fields and PATCH/PUT
-    // HTTPMethod cases is tagged.
-    .package(path: "../SwiftOpenAI"),
+    .package(url: "https://github.com/jamesrochabrun/SwiftOpenAI", from: "4.6.0"),
     // S256 PKCE on Linux (Apple platforms use CryptoKit).
     .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
   ],

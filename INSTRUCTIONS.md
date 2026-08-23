@@ -99,10 +99,9 @@ OpenRouter.service(apiKey:configuration:httpClient:)   // factory (OpenRouter.sw
 
 ## Dependency note
 
-`Package.swift` currently uses a **local path dependency** on `../SwiftOpenAI` because the
-public `HTTPRequest`/`HTTPResponse` fields and `HTTPMethod.patch/.put` cases are not yet in a
-tagged SwiftOpenAI release. Once tagged upstream, switch to
-`.package(url: "https://github.com/jamesrochabrun/SwiftOpenAI", from: "<that version>")`.
+SwiftOpenAI is consumed as a remote SPM dependency (`from: "4.6.0"` — the first release with
+public `HTTPRequest`/`HTTPResponse` fields and `HTTPMethod.patch/.put`). For co-development,
+temporarily switch to `.package(path: "../SwiftOpenAI")`, but never commit that.
 
 ## Phase status
 
@@ -114,7 +113,6 @@ tagged SwiftOpenAI release. Once tagged upstream, switch to
 - [x] Phase 4 (v0.4.0) — generation content/feedback, activity, analytics, providers, ZDR, benchmarks, classifications, datasets
 - [x] Phase 5 (v0.5.0) — management tier: keys provisioning, BYOK, guardrails (+assignments), workspaces (+budgets/members), org members, observability destinations
 - [x] Phase 6 — SCIM groups/group-mappings
-- [x] CI — GitHub Actions macOS + Linux matrix (`.github/workflows/ci.yml`; clones SwiftOpenAI
-  as the sibling path dep — flip `SWIFTOPENAI_REF` to `main` once the transport PR merges)
+- [x] CI — GitHub Actions macOS + Linux matrix (`.github/workflows/ci.yml`)
 - [x] Linux — pure-Foundation code; PKCE uses swift-crypto on Linux (CryptoKit on Apple)
 - [ ] v1.0.0 polish — DocC catalog, live smoke tests in Examples/, API stability audit
