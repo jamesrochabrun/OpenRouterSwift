@@ -55,6 +55,16 @@ let routed = try await service.chatCompletion(
     reasoning: Reasoning(effort: .high)))
 ```
 
+### Smart model routing
+
+Routing is a request-level feature, not a separate endpoint. All of it is supported:
+
+- `model: "openrouter/auto"` — let OpenRouter pick the model
+- `plugins: [.autoRouter]` / `.autoBetaRouter` / `.paretoRouter` (cost-optimized) / `.fusion` (multi-model)
+- `models: [...]` — ordered fallbacks when the primary model fails
+- `provider: ProviderPreferences(sort: .price | .throughput | .latency | .exacto, maxPrice:, zdr:, ...)`
+- `model: "@preset/slug"` — saved routing config via the presets API
+
 Anything not yet typed passes through `extraBody`:
 
 ```swift
