@@ -6,7 +6,8 @@ import Foundation
 public struct OpenRouterModel: Decodable, Sendable {
   public let id: String
   public let canonicalSlug: String?
-  public let aliasTarget: String?
+  /// Either a slug string or an object, depending on the model — kept dynamic.
+  public let aliasTarget: JSONValue?
   public let name: String?
   public let description: String?
   public let created: Double?
