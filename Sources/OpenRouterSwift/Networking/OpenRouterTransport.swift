@@ -33,6 +33,11 @@ struct OpenRouterTransport {
     self.baseURL = baseURL
     self.defaultHeaders = defaultHeaders
     encoder = JSONEncoder()
+    // Sorted keys: an unconfigured encoder orders an object's keys by where the allocator
+    // put its container, so two requests of identical content could differ on the wire. A
+    // request body is a prompt-cache prefix for the provider (system text, tool definitions);
+    // it must be byte-stable across the requests of a session.
+    encoder.outputFormatting = [.sortedKeys]
     decoder = JSONDecoder()
     self.debugEnabled = debugEnabled
   }

@@ -51,6 +51,13 @@ public struct Message: Encodable, Sendable {
   public var toolCalls: [ToolCall]?
   /// Message-level cache breakpoint (in addition to part-level `cacheControl`).
   public var cacheControl: CacheControl?
+  /// For `role: .assistant` — the reasoning blocks a previous response returned in
+  /// `reasoning_details`, replayed verbatim so a model that signs or encrypts its reasoning
+  /// (Anthropic thinking blocks, OpenAI encrypted reasoning) accepts the follow-up request of a
+  /// tool loop. Opaque: pass back exactly what the response carried, in order. Each entry keeps
+  /// the provider's own `type`/`format` tags (`reasoning.text`, `reasoning.summary`,
+  /// `reasoning.encrypted`; `anthropic-claude-v1`, `openai-responses-v1`, …).
+  public var reasoningDetails: [JSONValue]?
 
   public init(
     role: Role,
@@ -58,7 +65,8 @@ public struct Message: Encodable, Sendable {
     name: String? = nil,
     toolCallId: String? = nil,
     toolCalls: [ToolCall]? = nil,
-    cacheControl: CacheControl? = nil)
+    cacheControl: CacheControl? = nil,
+    reasoningDetails: [JSONValue]? = nil)
   {
     self.role = role
     self.content = content
@@ -66,6 +74,7 @@ public struct Message: Encodable, Sendable {
     self.toolCallId = toolCallId
     self.toolCalls = toolCalls
     self.cacheControl = cacheControl
+    self.reasoningDetails = reasoningDetails
   }
 
   /// Convenience for plain-text messages: `.user("Hello")`.
@@ -83,6 +92,7 @@ public struct Message: Encodable, Sendable {
     case toolCallId = "tool_call_id"
     case toolCalls = "tool_calls"
     case cacheControl = "cache_control"
+    case reasoningDetails = "reasoning_details"
   }
 }
 

@@ -160,4 +160,52 @@ final class ChatCompletionRequestEncodingTests: XCTestCase {
     XCTAssertEqual(choice["type"] as? String, "function")
     XCTAssertEqual((choice["function"] as? [String: Any])?["name"] as? String, "get_weather")
   }
+
+  func testAssistantReasoningDetailsReplayVerbatimAndAreOmittedWhenNil() throws {
+    let block: JSONValue = .object([
+      "type": .string("reasoning.text"),
+      "format": .string("anthropic-claude-v1"),
+      "text": .string("Need the weather first."),
+      "signature": .string("sig-abc"),
+    ])
+    let request = ChatCompletionRequest(
+      model: "m",
+      messages: [
+        .user("weather?"),
+        Message(
+          role: .assistant,
+          toolCalls: [ToolCall(id: "call_1", function: .init(name: "get_weather", arguments: "{}"))],
+          reasoningDetails: [block]),
+        .tool("sunny", toolCallId: "call_1"),
+      ])
+
+    let json = try encodeToDictionary(request)
+    let messages = try XCTUnwrap(json["messages"] as? [[String: Any]])
+    XCTAssertNil(messages[0]["reasoning_details"])
+    let details = try XCTUnwrap(messages[1]["reasoning_details"] as? [[String: Any]])
+    XCTAssertEqual(details.count, 1)
+    XCTAssertEqual(details[0]["type"] as? String, "reasoning.text")
+    XCTAssertEqual(details[0]["format"] as? String, "anthropic-claude-v1")
+    XCTAssertEqual(details[0]["signature"] as? String, "sig-abc")
+    XCTAssertNil(messages[2]["reasoning_details"])
+  }
+
+  func testReasoningEffortEncodesAsATopLevelStringApartFromTheReasoningObject() throws {
+    // OpenAI's chat-completions spelling: a top-level string, no `reasoning` object beside it.
+    let openai = try encodeToDictionary(ChatCompletionRequest(
+      model: "m", messages: [.user("hi")], reasoningEffort: .medium))
+    XCTAssertEqual(openai["reasoning_effort"] as? String, "medium")
+    XCTAssertNil(openai["reasoning"])
+
+    // OpenRouter's spelling: the object, and no `reasoning_effort` key.
+    let openrouter = try encodeToDictionary(ChatCompletionRequest(
+      model: "m", messages: [.user("hi")], reasoning: Reasoning(effort: .high)))
+    XCTAssertEqual((openrouter["reasoning"] as? [String: Any])?["effort"] as? String, "high")
+    XCTAssertNil(openrouter["reasoning_effort"])
+
+    // Neither set: neither key.
+    let plain = try encodeToDictionary(ChatCompletionRequest(model: "m", messages: [.user("hi")]))
+    XCTAssertNil(plain["reasoning"])
+    XCTAssertNil(plain["reasoning_effort"])
+  }
 }
